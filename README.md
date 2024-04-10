@@ -1,2 +1,17 @@
 # AllertaCatanzaro
 sito scritto in node.js che controlla le allerte attuali di Catanzaro, Calabria, ITALY usando API della protezione civile
+![image](https://github.com/ImDimii/AllertaCatanzaro/assets/95036781/3da33000-518c-49bd-9d17-8535c942413f)
+
+
+
+
+1) INSTALLARE NODE E INIZIALIZZARLO
+2) INSTALLARE LE LIBRERIE EXPRESS, AXIOS, CORS TRAMITE NPM
+3) AVVIARE IL SERVER server.js
+4) MODIFICARE IL FILE index.html METTENDO AL POSTO DI LOCALHOST L'IP PUBBLICO/DOMINIO (RICORDO CHE BISOGNA APRIRE LA PORTA 3000 DAL ROUTER PER POTER ACCEDERE DA ESTERNO)
+5) MODIFICARE IL FILE docs.html INSERENDO IL PROPRIO IP/DOMINIO
+
+
+PER PROBLEMI E INFO CONTATTATEMI https://www.instagram.com/dimitri.cotilli/
+
+! RICORDO CHE E' TUTTO A SCOPO INFORMATIVO SENZA LUCRO !
