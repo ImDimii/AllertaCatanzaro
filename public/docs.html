@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+  <style>
+    pre {
+      overflow-x: auto;
+    }
+  </style>
+  <title>API Documentation</title>
+</head>
+<body class="bg-gray-100">
+  <div class="container mx-auto mt-8 p-4">
+    <h1 class="text-4xl font-bold mb-4">API Documentation</h1>
+
+    <div class="mb-6">
+      <h2 class="text-2xl font-semibold mb-2">Get Weather Alert Information For Catanzaro</h2>
+      <p class="mb-4">Retrieve weather alert information for both today and tomorrow.</p>
+      
+      <h3 class="text-lg font-semibold mb-2">Endpoint:</h3>
+      <code class="bg-gray-200 p-2 rounded">GET 94.176.233.185:3000/api/meteo</code>
+
+      <h3 class="text-lg font-semibold mb-2 mt-4">Parameters:</h3>
+      <ul class="list-disc pl-6">
+        <li><code>day</code> (Optional): Specify 'today' or 'tomorrow' to get information for a specific day.</li>
+      </ul>
+
+      <h3 class="text-lg font-semibold mb-2 mt-4">Example Requests:</h3>
+      <pre class="bg-gray-200 p-2 rounded overflow-x-auto"><code>// Get weather alert information for both days
+GET 94.176.233.185:3000/api/meteo
+
+// Get weather alert information for today only
+GET 94.176.233.185:3000/api/meteo?day=today
+
+// Get weather alert information for tomorrow only
+GET 94.176.233.185:3000/api/meteo?day=tomorrow</code></pre>
+    </div>
+
+    <div class="mb-6">
+      <h3 class="text-2xl font-semibold mb-2">Response Examples:</h3>
+
+      <h4 class="text-lg font-semibold mb-2">Response for GET 94.176.233.185:3000/api/meteo:</h4>
+      <pre class="bg-gray-200 p-2 rounded overflow-x-auto"><code>{
+  "alertInfo": {
+    "today": {
+      "date": "07/01/2024",
+      "color": "Verde",
+      "description": "Venti di burrasca o burrasca forte dai quadranti occidentali.\nMareggiate lungo le coste esposte.\nprecipitazioni da isolate a sparse, anche a carattere di rovescio o temporale."
+    },
+    "tomorrow": {
+      "date": "08/01/2024",
+      "color": "Gialla",
+      "description": "Venti di burrasca o burrasca forte dai quadranti occidentali.\nMareggiate lungo le coste esposte ai venti.\nprecipitazioni da isolate a sparse, anche a carattere di rovescio o temporale."
+    }
+  }
+}</code></pre>
+
+      <h4 class="text-lg font-semibold mb-2">Response for GET 94.176.233.185:3000/api/meteo?day=today:</h4>
+      <pre class="bg-gray-200 p-2 rounded overflow-x-auto"><code>{
+  "alertInfo": {
+    "today": {
+      "date": "07/01/2024",
+      "color": "Verde",
+      "description": "Venti di burrasca o burrasca forte dai quadranti occidentali.\nMareggiate lungo le coste esposte.\nprecipitazioni da isolate a sparse, anche a carattere di rovescio o temporale."
+    }
+  }
+}</code></pre>
+
+      <h4 class="text-lg font-semibold mb-2">Response for GET 94.176.233.185:3000/api/meteo?day=tomorrow:</h4>
+      <pre class="bg-gray-200 p-2 rounded overflow-x-auto"><code>{
+  "alertInfo": {
+    "tomorrow": {
+      "date": "08/01/2024",
+      "color": "Gialla",
+      "description": "Venti di burrasca o burrasca forte dai quadranti occidentali.\nMareggiate lungo le coste esposte ai venti.\nprecipitazioni da isolate a sparse, anche a carattere di rovescio o temporale."
+    }
+  }
+}</code></pre>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Allerta Catanzaro</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 p-4 md:p-8 lg:p-12">
+
+    <div class="max-w-md mx-auto bg-white rounded p-4 md:p-8 lg:p-12">
+        <h1 class="text-xl md:text-2xl lg:text-3xl font-bold mb-6">Allerta Meteo Catanzaro</h1>
+
+        <div id="lastUpdated" class="mb-4 text-gray-500 text-xs md:text-sm lg:text-base">
+            Ultimo aggiornamento: <span id="lastUpdatedTime"></span>
+        </div>
+
+        <div id="todayForecast" class="mb-6">
+            <h2 class="text-sm md:text-base lg:text-lg font-semibold mb-2">
+                Oggi - <span id="todayDate"></span>
+                <span id="todayAlertDot" class="inline-block w-3 h-3 rounded-full ml-2"></span>
+            </h2>
+            <div id="todayDescription" class="bg-gray-100 text-gray-700 p-4 rounded"></div>
+            <img id="todayAlertImage" class="hidden mx-auto mt-4 w-24" alt="Alert Image">
+        </div>
+
+        <div id="tomorrowForecast" class="mb-6">
+            <h2 class="text-sm md:text-base lg:text-lg font-semibold mb-2">
+                Domani - <span id="tomorrowDate"></span>
+                <span id="tomorrowAlertDot" class="inline-block w-3 h-3 rounded-full ml-2"></span>
+            </h2>
+            <div id="tomorrowDescription" class="bg-gray-100 text-gray-700 p-4 rounded"></div>
+            <img id="tomorrowAlertImage" class="hidden mx-auto mt-4 w-24" alt="Alert Image">
+        </div>
+        <!--
+         <div id="visitCount" class="text-sm text-gray-500 mb-4">
+            Visite oggi: <span id="todayVisits"></span><br>
+            Visite questa settimana: <span id="weekVisits"></span><br>
+            Visite questo mese: <span id="monthVisits"></span>
+        </div>
+        -->
+        <script>
+            // Funzione per ottenere il colore in base all'allerta
+            function getColor(alertColor) {
+                switch (alertColor.toLowerCase()) {
+                    case 'verde':
+                        return 'green';
+                    case 'gialla':
+                        return 'yellow';
+                    case 'arancione':
+                        return 'orange';
+                    case 'rossa':
+                        return 'red';
+                    default:
+                        return 'gray';
+                }
+            }
+
+            // Funzione per ottenere la data corrente nel formato YYYY-MM-DD
+            function getCurrentDate() {
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            }
+
+            // Effettua la richiesta all'API per ottenere l'ultimo aggiornamento
+            fetch('http://localhost:3000/last-updated')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('lastUpdatedTime').textContent = data;
+                })
+                .catch(error => console.error('Errore nella richiesta API last-updated:', error));
+
+            // Effettua la richiesta all'API per ottenere i dati meteo
+            fetch('http://localhost:3000/api/meteo')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('todayDate').textContent = data.alertInfo.today.date;
+                    document.getElementById('todayDescription').textContent = data.alertInfo.today.description;
+                    document.getElementById('todayAlertDot').style.backgroundColor = getColor(data.alertInfo.today.color);
+
+                    document.getElementById('tomorrowDate').textContent = data.alertInfo.tomorrow.date;
+                    document.getElementById('tomorrowDescription').textContent = data.alertInfo.tomorrow.description;
+                    document.getElementById('tomorrowAlertDot').style.backgroundColor = getColor(data.alertInfo.tomorrow.color);
+
+                    // Aggiorna i valori delle immagini in base al colore dell'allerta
+                    document.getElementById('todayAlertImage').src = `./cz_${data.alertInfo.today.color.toLowerCase()}.png`;
+                    document.getElementById('todayAlertImage').classList.remove('hidden');
+
+                    document.getElementById('tomorrowAlertImage').src = `./cz_${data.alertInfo.tomorrow.color.toLowerCase()}.png`;
+                    document.getElementById('tomorrowAlertImage').classList.remove('hidden');
+                })
+                .catch(error => console.error('Errore nella richiesta API meteo:', error));
+
+         // Funzione per ottenere le statistiche globali
+    function getGlobalStatistics() {
+        fetch('http://localhost:3000/api/global-statistics')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('todayVisits').textContent = data.todayVisits;
+                document.getElementById('weekVisits').textContent = data.weekVisits;
+                document.getElementById('monthVisits').textContent = data.monthVisits;
+
+                // Aggiornamento delle statistiche di visita
+                incrementVisitCounter('Today', data.todayVisits);
+                incrementVisitCounter('Week', data.weekVisits);
+                incrementVisitCounter('Month', data.monthVisits);
+            })
+            .catch(error => console.error('Errore nella richiesta API global-statistics:', error));
+    }
+
+    // Funzione per incrementare il contatore delle visite
+    function incrementVisitCounter(duration, currentCount) {
+        const currentDate = getCurrentDate();
+        const cookieName = getCookieName(duration);
+
+        // Controlla se la visita è della data corrente
+        if (getCookieValue('lastVisitDate') !== currentDate) {
+            setCookieValue('lastVisitDate', currentDate);
+
+            // Aggiorna i valori nella pagina
+            document.getElementById(`${duration.toLowerCase()}Visits`).textContent = currentCount + 1;
+
+            // Aggiorna i dati globali (opzionale, dipende da come vuoi gestirli)
+            currentCount++;
+            updateGlobalStatistics(duration, currentCount);
+        }
+    }
+    
+    function updateGlobalStatistics(duration, newCount) {
+        fetch('http://94.176.233.185:3000/api/update-global-statistics', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ duration: 'Today', count: 10 }), // Sostituisci con i dati corretti
+})
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(error => console.error('Errore nella richiesta API:', error));
+
+    }
+
+    // ...
+
+    // Effettua la richiesta all'API per ottenere le statistiche globali
+    getGlobalStatistics();
+        </script>
+    </div>
+
+    <div class="mt-8 text-sm text-gray-500 text-center">
+        © 2024 | <a href="http://4ykf.l.time4vps.cloud/docs.html" target="_blank" class="underline">API Docs</a> | By <a href="https://www.instagram.com/dimitri.cotilli/" target="_blank" class="underline">Dimitri</a>
+    </div>
+</body>
+</html>
