@@ -32,13 +32,15 @@
             <div id="tomorrowDescription" class="bg-gray-100 text-gray-700 p-4 rounded"></div>
             <img id="tomorrowAlertImage" class="hidden mx-auto mt-4 w-24" alt="Alert Image">
         </div>
+
         <!--
-         <div id="visitCount" class="text-sm text-gray-500 mb-4">
+        <div id="visitCount" class="text-sm text-gray-500 mb-4">
             Visite oggi: <span id="todayVisits"></span><br>
             Visite questa settimana: <span id="weekVisits"></span><br>
             Visite questo mese: <span id="monthVisits"></span>
         </div>
         -->
+
         <script>
             // Funzione per ottenere il colore in base all'allerta
             function getColor(alertColor) {
@@ -66,7 +68,7 @@
             }
 
             // Effettua la richiesta all'API per ottenere l'ultimo aggiornamento
-            fetch('http://localhost:3000/last-updated')
+            fetch('/last-updated')
                 .then(response => response.text())
                 .then(data => {
                     document.getElementById('lastUpdatedTime').textContent = data;
@@ -74,7 +76,7 @@
                 .catch(error => console.error('Errore nella richiesta API last-updated:', error));
 
             // Effettua la richiesta all'API per ottenere i dati meteo
-            fetch('http://localhost:3000/api/meteo')
+            fetch('/api/meteo')
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('todayDate').textContent = data.alertInfo.today.date;
@@ -94,64 +96,62 @@
                 })
                 .catch(error => console.error('Errore nella richiesta API meteo:', error));
 
-         // Funzione per ottenere le statistiche globali
-    function getGlobalStatistics() {
-        fetch('http://localhost:3000/api/global-statistics')
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('todayVisits').textContent = data.todayVisits;
-                document.getElementById('weekVisits').textContent = data.weekVisits;
-                document.getElementById('monthVisits').textContent = data.monthVisits;
+            // Funzione per ottenere le statistiche globali
+            function getGlobalStatistics() {
+                fetch('/api/global-statistics')
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('todayVisits').textContent = data.todayVisits;
+                        document.getElementById('weekVisits').textContent = data.weekVisits;
+                        document.getElementById('monthVisits').textContent = data.monthVisits;
 
-                // Aggiornamento delle statistiche di visita
-                incrementVisitCounter('Today', data.todayVisits);
-                incrementVisitCounter('Week', data.weekVisits);
-                incrementVisitCounter('Month', data.monthVisits);
-            })
-            .catch(error => console.error('Errore nella richiesta API global-statistics:', error));
-    }
+                        // Aggiornamento delle statistiche di visita
+                        incrementVisitCounter('Today', data.todayVisits);
+                        incrementVisitCounter('Week', data.weekVisits);
+                        incrementVisitCounter('Month', data.monthVisits);
+                    })
+                    .catch(error => console.error('Errore nella richiesta API global-statistics:', error));
+            }
 
-    // Funzione per incrementare il contatore delle visite
-    function incrementVisitCounter(duration, currentCount) {
-        const currentDate = getCurrentDate();
-        const cookieName = getCookieName(duration);
+            // Funzione per incrementare il contatore delle visite
+            function incrementVisitCounter(duration, currentCount) {
+                const currentDate = getCurrentDate();
+                const cookieName = getCookieName(duration);
 
-        // Controlla se la visita è della data corrente
-        if (getCookieValue('lastVisitDate') !== currentDate) {
-            setCookieValue('lastVisitDate', currentDate);
+                // Controlla se la visita è della data corrente
+                if (getCookieValue('lastVisitDate') !== currentDate) {
+                    setCookieValue('lastVisitDate', currentDate);
 
-            // Aggiorna i valori nella pagina
-            document.getElementById(`${duration.toLowerCase()}Visits`).textContent = currentCount + 1;
+                    // Aggiorna i valori nella pagina
+                    document.getElementById(`${duration.toLowerCase()}Visits`).textContent = currentCount + 1;
 
-            // Aggiorna i dati globali (opzionale, dipende da come vuoi gestirli)
-            currentCount++;
-            updateGlobalStatistics(duration, currentCount);
-        }
-    }
-    
-    function updateGlobalStatistics(duration, newCount) {
-        fetch('http://94.176.233.185:3000/api/update-global-statistics', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({ duration: 'Today', count: 10 }), // Sostituisci con i dati corretti
-})
-  .then(response => response.json())
-  .then(data => console.log(data))
-  .catch(error => console.error('Errore nella richiesta API:', error));
+                    // Aggiorna i dati globali (opzionale, dipende da come vuoi gestirli)
+                    currentCount++;
+                    updateGlobalStatistics(duration, currentCount);
+                }
+            }
 
-    }
+            function updateGlobalStatistics(duration, newCount) {
+                fetch('/api/update-global-statistics', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ duration: 'Today', count: 10 }) // Sostituisci con i dati corretti
+                })
+                    .then(response => response.json())
+                    .then(data => console.log(data))
+                    .catch(error => console.error('Errore nella richiesta API:', error));
+            }
 
-    // ...
-
-    // Effettua la richiesta all'API per ottenere le statistiche globali
-    getGlobalStatistics();
+            // Effettua la richiesta all'API per ottenere le statistiche globali
+            getGlobalStatistics();
         </script>
     </div>
 
     <div class="mt-8 text-sm text-gray-500 text-center">
-        © 2024 | <a href="http://4ykf.l.time4vps.cloud/docs.html" target="_blank" class="underline">API Docs</a> | By <a href="https://www.instagram.com/dimitri.cotilli/" target="_blank" class="underline">Dimitri</a>
+        © 2024 | <a href="/docs.html" target="_blank" class="underline">API Docs</a> | By <a href="https://www.instagram.com/dimitri.cotilli/" target="_blank" class="underline">Dimitri</a>
     </div>
+
 </body>
 </html>
